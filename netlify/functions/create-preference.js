@@ -24,7 +24,7 @@ export const handler = async (event) => {
             id: 'unfollow-tracker-01',
             title: 'Acesso VIP - UnfollowTracker',
             quantity: 1,
-            unit_price: 19.90,
+            unit_price: 0.99,
             currency_id: 'BRL',
           }
         ],
