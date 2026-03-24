@@ -55,13 +55,22 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
 
-  // EFEITO NOVO: Verifica se o usuário acabou de voltar do Mercado Pago com pagamento aprovado
+  // EFEITO ATUALIZADO: Salva o passe VIP no navegador para não perder ao recarregar
   useEffect(() => {
+    // 1. Verifica se já existe um passe VIP salvo no celular/PC do usuário
+    const hasVIPAccess = localStorage.getItem('unfollowTrackerVIP');
+    if (hasVIPAccess === 'true') {
+      setHasPaid(true);
+    }
+
+    // 2. Verifica se a URL tem o aviso de sucesso do Mercado Pago
     const queryParams = new URLSearchParams(window.location.search);
     const status = queryParams.get('status');
 
     if (status === 'success') {
       setHasPaid(true); // Libera o acesso VIP!
+      localStorage.setItem('unfollowTrackerVIP', 'true'); // SALVA ETERNAMENTE NO NAVEGADOR
+      
       // Limpa a URL para o usuário não ver aqueles códigos do Mercado Pago
       window.history.replaceState(null, '', window.location.pathname);
     } else if (status === 'failure') {
@@ -150,11 +159,11 @@ export default function App() {
                 <div className="text-sm font-bold text-pink-500 uppercase tracking-wider mb-1">Passo 1</div>
                 <h3 className="text-xl font-bold mb-2">Instale a Ferramenta</h3>
                 <p className="text-slate-600 mb-4">
-                  Nossa ferramenta é uma extensão segura para o Google Chrome. Clique no botão abaixo para baixar e instalar no seu navegador. Clique no botão obter ou Obter extensão no caso do MIcrosoft Edge
+                  Nossa ferramenta é uma extensão segura para o Google Chrome. Clique no botão abaixo para baixar e instalar no seu navegador.
                 </p>
                 <button className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors inline-flex items-center">
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1.5-6.5l-4-4 1.414-1.414L10.5 12.672l6.086-6.086L18 8l-7.5 7.5z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10-10 10zm-1.5-6.5l-4-4 1.414-1.414L10.5 12.672l6.086-6.086L18 8l-7.5 7.5z"/>
                   </svg>
                   Adicionar ao Chrome
                 </button>
@@ -232,7 +241,7 @@ export default function App() {
             <div className="absolute -top-4 -right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg transform rotate-3">
               Oferta Especial
             </div>
-            <div className="text-slate-500 line-through mb-1">De R$ 79,99 por apenas</div>
+            <div className="text-slate-500 line-through mb-1">De R$ 79,90 por apenas</div>
             <div className="text-5xl font-extrabold text-slate-900 mb-6">
               R$ 49,99 <span className="text-lg text-slate-500 font-medium block mt-1">pagamento único</span>
             </div>
