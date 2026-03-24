@@ -55,15 +55,45 @@ export default function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
 
-  // Simulação de integração com Mercado Pago
-  const handlePayment = () => {
+  // EFEITO NOVO: Verifica se o usuário acabou de voltar do Mercado Pago com pagamento aprovado
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const status = queryParams.get('status');
+
+    if (status === 'success') {
+      setHasPaid(true); // Libera o acesso VIP!
+      // Limpa a URL para o usuário não ver aqueles códigos do Mercado Pago
+      window.history.replaceState(null, '', window.location.pathname);
+    } else if (status === 'failure') {
+      alert("Ocorreu um problema com o pagamento. Tente novamente.");
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
+
+  // FUNÇÃO REAL: Chama o Backend para gerar o link de pagamento
+  const handlePayment = async () => {
     setIsProcessing(true);
-    // Simula o tempo de redirecionamento/processamento do Mercado Pago
-    setTimeout(() => {
+    
+    try {
+      // Chama a função que criamos no Netlify
+      const response = await fetch('/.netlify/functions/create-preference', {
+        method: 'POST',
+      });
+      
+      const data = await response.json();
+      
+      // Se a função devolveu o link de pagamento, redireciona o usuário para lá
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        alert("Erro ao conectar com o Mercado Pago. Tente novamente.");
+        setIsProcessing(false);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro de conexão. Verifique sua internet.");
       setIsProcessing(false);
-      setHasPaid(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 2500);
+    }
   };
 
   const faqs = [
@@ -120,19 +150,14 @@ export default function App() {
                 <div className="text-sm font-bold text-pink-500 uppercase tracking-wider mb-1">Passo 1</div>
                 <h3 className="text-xl font-bold mb-2">Instale a Ferramenta</h3>
                 <p className="text-slate-600 mb-4">
-                  Nossa ferramenta é uma extensão segura para o Google Chrome. Clique no botão abaixo para baixar e instalar no seu navegador.
+                  Nossa ferramenta é uma extensão segura para o Google Chrome. Clique no botão abaixo para baixar e instalar no seu navegador. Clique no botão obter ou Obter extensão no caso do MIcrosoft Edge
                 </p>
-                <a 
-                  href="https://chromewebstore.google.com/detail/n%C3%A3o-seguidores/ggnclhlkbhihgehcgmnckfgkjjkckbop" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors inline-flex items-center"
-                >
+                <button className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors inline-flex items-center">
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1.5-6.5l-4-4 1.414-1.414L10.5 12.672l6.086-6.086L18 8l-7.5 7.5z"/>
                   </svg>
                   Adicionar ao Chrome
-                </a>
+                </button>
               </div>
             </div>
 
@@ -207,9 +232,9 @@ export default function App() {
             <div className="absolute -top-4 -right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg transform rotate-3">
               Oferta Especial
             </div>
-            <div className="text-slate-500 line-through mb-1">De R$ 79,99 por apenas</div>
+            <div className="text-slate-500 line-through mb-1">De R$ 49,90 por apenas</div>
             <div className="text-5xl font-extrabold text-slate-900 mb-6">
-              R$ 49,99 <span className="text-lg text-slate-500 font-medium block mt-1">pagamento único</span>
+              R$ 19,90 <span className="text-lg text-slate-500 font-medium block mt-1">pagamento único</span>
             </div>
             
             <button 
