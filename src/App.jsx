@@ -54,46 +54,82 @@ export default function App() {
   const [hasPaid, setHasPaid] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeFaq, setActiveFaq] = useState(null);
+  const [isCheckingPayment, setIsCheckingPayment] = useState(false);
 
-  // EFEITO ATUALIZADO: Salva o passe VIP no navegador para não perder ao recarregar
+  // EFEITO NOVO: Verifica se o usuário acabou de voltar do Mercado Pago com pagamento aprovado
   useEffect(() => {
     // 1. Verifica se já existe um passe VIP salvo no celular/PC do usuário
     const hasVIPAccess = localStorage.getItem('unfollowTrackerVIP');
-    
-    // LOG DE TESTE PARA O CONSOLE
-    console.log("Verificando acesso VIP...", { hasVIPAccess });
-    
     if (hasVIPAccess === 'true') {
-      console.log("Acesso já estava liberado na memória!");
       setHasPaid(true);
     }
 
-    // 2. Verifica se a URL tem o aviso de sucesso do Mercado Pago
     const queryParams = new URLSearchParams(window.location.search);
     const status = queryParams.get('status');
     const collectionStatus = queryParams.get('collection_status');
+    const paymentId = queryParams.get('payment_id');
 
-    // LOG DE TESTE PARA O CONSOLE
-    if (status || collectionStatus) {
-      console.log("=== RESPOSTA DO MERCADO PAGO ENCONTRADA ===");
-      console.log("Status da URL:", status);
-      console.log("Collection Status da URL:", collectionStatus);
-    }
+    let intervalId;
 
-    // CORREÇÃO: O Mercado Pago adiciona "approved" na URL, então precisamos checar por ele também!
     if (status === 'success' || status === 'approved' || collectionStatus === 'approved') {
-      console.log("✅ Pagamento APROVADO identificado! Liberando área VIP...");
-      
       setHasPaid(true); // Libera o acesso VIP!
-      localStorage.setItem('unfollowTrackerVIP', 'true'); // SALVA ETERNAMENTE NO NAVEGADOR
-      
+      localStorage.setItem('unfollowTrackerVIP', 'true');
       // Limpa a URL para o usuário não ver aqueles códigos do Mercado Pago
       window.history.replaceState(null, '', window.location.pathname);
+    } 
+    // NOVO: Se voltou rápido demais e está PENDENTE (PIX ou Boleto)
+    else if (status === 'pending' && paymentId) {
+      console.log("⏳ Pagamento PENDENTE. Iniciando sala de espera...");
+      setIsCheckingPayment(true); // Mostra a tela de carregamento
+
+      let tentativas = 0;
+      const maxTentativas = 30; // 30 tentativas x 10 segundos = 5 minutos de espera máxima
+
+      // Cria um relógio que checa o servidor a cada 10 segundos (10000 milissegundos)
+      intervalId = setInterval(async () => {
+        tentativas++;
+        
+        // TRAVA DE SEGURANÇA: Para de procurar após 5 minutos para não gastar o limite do Netlify
+        if (tentativas > maxTentativas) {
+          console.log("Tempo limite atingido. Parando de checar.");
+          clearInterval(intervalId);
+          setIsCheckingPayment(false);
+          alert("A confirmação do PIX está demorando mais que o normal. Se você já pagou, não se preocupe! Recarregue esta página daqui a pouco para liberar seu acesso.");
+          window.history.replaceState(null, '', window.location.pathname);
+          return;
+        }
+
+        try {
+          console.log(`Checando status no Mercado Pago... (Tentativa ${tentativas} de ${maxTentativas})`);
+          const res = await fetch(`/.netlify/functions/check-payment?payment_id=${paymentId}`);
+          const data = await res.json();
+
+          if (data.status === 'approved') {
+            console.log("✅ AGORA FOI! Pagamento aprovado no servidor!");
+            clearInterval(intervalId);
+            setIsCheckingPayment(false);
+            setHasPaid(true);
+            localStorage.setItem('unfollowTrackerVIP', 'true');
+            window.history.replaceState(null, '', window.location.pathname);
+          } else if (data.status === 'rejected' || data.status === 'cancelled') {
+            console.log("❌ Pagamento cancelado/rejeitado no servidor.");
+            clearInterval(intervalId);
+            setIsCheckingPayment(false);
+            alert("O pagamento não foi aprovado ou foi cancelado.");
+            window.history.replaceState(null, '', window.location.pathname);
+          }
+        } catch (err) {
+          console.error("Erro ao checar pagamento", err);
+        }
+      }, 10000); // 10000 = 10 segundos
     } else if (status === 'failure' || status === 'rejected') {
-      console.log("❌ Pagamento REJEITADO identificado.");
       alert("Ocorreu um problema com o pagamento. Tente novamente.");
       window.history.replaceState(null, '', window.location.pathname);
     }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
   // FUNÇÃO REAL: Chama o Backend para gerar o link de pagamento
@@ -141,6 +177,41 @@ export default function App() {
     }
   ];
 
+  // TELA 1.5: SALA DE ESPERA (Aparece apenas quando está checando o PIX)
+  if (isCheckingPayment) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6 text-center text-white font-sans">
+        <div className="relative mb-8">
+          {/* Círculo pulsante de fundo */}
+          <div className="absolute inset-0 bg-pink-500 rounded-full blur-xl opacity-20 animate-pulse"></div>
+          {/* Ícone de carregamento principal */}
+          <svg className="animate-spin relative h-20 w-20 text-pink-500" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+        
+        <h2 className="text-3xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-purple-400">
+          Processando seu PIX...
+        </h2>
+        
+        <div className="bg-slate-800 rounded-2xl p-6 max-w-md border border-slate-700 shadow-2xl">
+          <p className="text-slate-300 text-lg mb-6">
+            Já recebemos o seu pedido! O banco está confirmando a transação.
+          </p>
+          <div className="flex items-center justify-center gap-3 text-yellow-400 bg-yellow-400/10 py-4 px-4 rounded-xl border border-yellow-400/20">
+            <svg className="w-8 h-8 animate-pulse flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span className="font-semibold text-sm text-left leading-tight">
+              Importante: Pode levar até 5 minutos. <br/>Não feche e nem saia desta página.
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (hasPaid) {
     return (
       <div className="min-h-screen bg-slate-50 font-sans text-slate-800 pb-20">
@@ -178,12 +249,17 @@ export default function App() {
                 <p className="text-slate-600 mb-4">
                   Nossa ferramenta é uma extensão segura para o Google Chrome. Clique no botão abaixo para baixar e instalar no seu navegador.
                 </p>
-                <button className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors inline-flex items-center">
+                <a 
+                  href="https://chromewebstore.google.com/detail/n%C3%A3o-seguidores/ggnclhlkbhihgehcgmnckfgkjjkckbop" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors inline-flex items-center"
+                >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10-10 10zm-1.5-6.5l-4-4 1.414-1.414L10.5 12.672l6.086-6.086L18 8l-7.5 7.5z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1.5-6.5l-4-4 1.414-1.414L10.5 12.672l6.086-6.086L18 8l-7.5 7.5z"/>
                   </svg>
                   Adicionar ao Chrome
-                </button>
+                </a>
               </div>
             </div>
 
@@ -258,9 +334,9 @@ export default function App() {
             <div className="absolute -top-4 -right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg transform rotate-3">
               Oferta Especial
             </div>
-            <div className="text-slate-500 line-through mb-1">De R$ 79,90 por apenas</div>
+            <div className="text-slate-500 line-through mb-1">De R$ 49,90 por apenas</div>
             <div className="text-5xl font-extrabold text-slate-900 mb-6">
-              R$ 49,99 <span className="text-lg text-slate-500 font-medium block mt-1">pagamento único</span>
+              R$ 19,90 <span className="text-lg text-slate-500 font-medium block mt-1">pagamento único</span>
             </div>
             
             <button 
