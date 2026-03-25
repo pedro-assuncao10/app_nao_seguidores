@@ -59,21 +59,38 @@ export default function App() {
   useEffect(() => {
     // 1. Verifica se já existe um passe VIP salvo no celular/PC do usuário
     const hasVIPAccess = localStorage.getItem('unfollowTrackerVIP');
+    
+    // LOG DE TESTE PARA O CONSOLE
+    console.log("Verificando acesso VIP...", { hasVIPAccess });
+    
     if (hasVIPAccess === 'true') {
+      console.log("Acesso já estava liberado na memória!");
       setHasPaid(true);
     }
 
     // 2. Verifica se a URL tem o aviso de sucesso do Mercado Pago
     const queryParams = new URLSearchParams(window.location.search);
     const status = queryParams.get('status');
+    const collectionStatus = queryParams.get('collection_status');
 
-    if (status === 'success') {
+    // LOG DE TESTE PARA O CONSOLE
+    if (status || collectionStatus) {
+      console.log("=== RESPOSTA DO MERCADO PAGO ENCONTRADA ===");
+      console.log("Status da URL:", status);
+      console.log("Collection Status da URL:", collectionStatus);
+    }
+
+    // CORREÇÃO: O Mercado Pago adiciona "approved" na URL, então precisamos checar por ele também!
+    if (status === 'success' || status === 'approved' || collectionStatus === 'approved') {
+      console.log("✅ Pagamento APROVADO identificado! Liberando área VIP...");
+      
       setHasPaid(true); // Libera o acesso VIP!
       localStorage.setItem('unfollowTrackerVIP', 'true'); // SALVA ETERNAMENTE NO NAVEGADOR
       
       // Limpa a URL para o usuário não ver aqueles códigos do Mercado Pago
       window.history.replaceState(null, '', window.location.pathname);
-    } else if (status === 'failure') {
+    } else if (status === 'failure' || status === 'rejected') {
+      console.log("❌ Pagamento REJEITADO identificado.");
       alert("Ocorreu um problema com o pagamento. Tente novamente.");
       window.history.replaceState(null, '', window.location.pathname);
     }
