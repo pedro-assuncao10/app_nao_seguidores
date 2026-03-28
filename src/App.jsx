@@ -226,6 +226,11 @@ export default function App() {
           </div>
         </header>
 
+        {/* NOVO AVISO: Uso exclusivo em Computador */}
+        <div className="bg-yellow-400 text-yellow-900 text-center py-2 px-4 text-sm font-bold shadow-sm">
+          ⚠️ Atenção: Esta extensão funciona EXCLUSIVAMENTE no Google Chrome(Edge) pelo computador. Não é possível instalar no celular.
+        </div>
+
         <main className="max-w-4xl mx-auto px-6 mt-12">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">
@@ -237,33 +242,45 @@ export default function App() {
           </div>
 
           <div className="space-y-8">
-            {/* Passo 1 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col md:flex-row items-start md:items-center gap-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-2 h-full bg-pink-500"></div>
-              <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl p-4 flex-shrink-0 shadow-lg shadow-pink-200">
-                <DownloadIcon />
+            
+            {/* --- GRUPO: Passo 1 + Imagens --- */}
+            <div className="flex flex-col gap-4">
+              {/* Card Passo 1 */}
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col md:flex-row items-start md:items-center gap-6 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-2 h-full bg-pink-500"></div>
+                <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl p-4 flex-shrink-0 shadow-lg shadow-pink-200">
+                  <DownloadIcon />
+                </div>
+                <div className="flex-grow">
+                  <div className="text-sm font-bold text-pink-500 uppercase tracking-wider mb-1">Passo 1</div>
+                  <h3 className="text-xl font-bold mb-2">Instale a Ferramenta</h3>
+                  {/* TEXTO ATUALIZADO */}
+                  <p className="text-slate-600 mb-4">
+                    Nossa ferramenta é uma extensão segura para o Google Chrome. Clique no botão abaixo para baixar e instalar no seu navegador. (clique em obter)
+                  </p>
+                  <a 
+                    href="https://chromewebstore.google.com/detail/n%C3%A3o-seguidores/ggnclhlkbhihgehcgmnckfgkjjkckbop" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors inline-flex items-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10-10 10zm-1.5-6.5l-4-4 1.414-1.414L10.5 12.672l6.086-6.086L18 8l-7.5 7.5z"/>
+                    </svg>
+                    Adicionar ao Chrome
+                  </a>
+                </div>
               </div>
-              <div className="flex-grow">
-                <div className="text-sm font-bold text-pink-500 uppercase tracking-wider mb-1">Passo 1</div>
-                <h3 className="text-xl font-bold mb-2">Instale a Ferramenta</h3>
-                <p className="text-slate-600 mb-4">
-                  Nossa ferramenta é uma extensão segura para o Google Chrome. Clique no botão abaixo para baixar e instalar no seu navegador.
-                </p>
-                <a 
-                  href="https://chromewebstore.google.com/detail/n%C3%A3o-seguidores/ggnclhlkbhihgehcgmnckfgkjjkckbop" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors inline-flex items-center"
-                >
-                  <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm-1.5-6.5l-4-4 1.414-1.414L10.5 12.672l6.086-6.086L18 8l-7.5 7.5z"/>
-                  </svg>
-                  Adicionar ao Chrome
-                </a>
+
+              {/* Imagens do Passo 1 */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <img src="/imagem1.png" alt="Instrução Passo 1 - Imagem 1" className="rounded-xl shadow-sm border border-slate-200 w-full object-cover" />
+                <img src="/imagem2.png" alt="Instrução Passo 1 - Imagem 2" className="rounded-xl shadow-sm border border-slate-200 w-full object-cover" />
+                <img src="/imagem3.png" alt="Instrução Passo 1 - Imagem 3" className="rounded-xl shadow-sm border border-slate-200 w-full object-cover" />
               </div>
             </div>
 
-            {/* Passo 2 */}
+            {/* --- Passo 2 (Sem imagens extras) --- */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col md:flex-row items-start md:items-center gap-6 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-2 h-full bg-purple-500"></div>
               <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 flex-shrink-0 shadow-lg shadow-purple-200">
@@ -272,8 +289,9 @@ export default function App() {
               <div className="flex-grow">
                 <div className="text-sm font-bold text-purple-500 uppercase tracking-wider mb-1">Passo 2</div>
                 <h3 className="text-xl font-bold mb-2">Acesse sua conta do Instagram</h3>
+                {/* TEXTO ATUALIZADO COM LINK */}
                 <p className="text-slate-600">
-                  Abra uma nova aba e acesse o site <strong>oficial</strong> do Instagram (instagram.com) e faça seu login normalmente. <br/>
+                  Acesse o site <strong>oficial</strong> do <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="text-pink-600 font-bold hover:underline">Instagram (clicando aqui para abrir em nova aba)</a> e faça seu login normalmente. <br/>
                   <span className="inline-flex items-center mt-2 text-sm text-green-600 font-medium bg-green-50 px-2 py-1 rounded">
                     <LockIcon /> Lembre-se: nós não temos acesso aos seus dados ou senha.
                   </span>
@@ -281,24 +299,47 @@ export default function App() {
               </div>
             </div>
 
-            {/* Passo 3 */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col md:flex-row items-start md:items-center gap-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-2 h-full bg-yellow-400"></div>
-              <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl p-4 flex-shrink-0 shadow-lg shadow-orange-200">
-                <PuzzleIcon />
+            {/* --- GRUPO: Passo 3 + Imagens --- */}
+            <div className="flex flex-col gap-4">
+              {/* Card Passo 3 */}
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col md:flex-row items-start md:items-center gap-6 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-2 h-full bg-yellow-400"></div>
+                <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl p-4 flex-shrink-0 shadow-lg shadow-orange-200">
+                  <PuzzleIcon />
+                </div>
+                <div className="flex-grow">
+                  <div className="text-sm font-bold text-orange-500 uppercase tracking-wider mb-1">Passo 3</div>
+                  <h3 className="text-xl font-bold mb-2">Execute a Varredura</h3>
+                  <p className="text-slate-600">
+                    Com o Instagram aberto, clique no ícone de <strong>Quebra-cabeça</strong> no canto superior direito do seu navegador Chrome. Selecione a extensão que você acabou de instalar. A própria ferramenta fará o resto e abrirá uma janela com a sua lista! <br /> Caso o link abra diretamente no app do Instagram clique nos 3 pontinhos no canto superior direito e clique em: <strong>Extensões - Não Seguidores</strong>
+                  </p>
+                </div>
               </div>
-              <div className="flex-grow">
-                <div className="text-sm font-bold text-orange-500 uppercase tracking-wider mb-1">Passo 3</div>
-                <h3 className="text-xl font-bold mb-2">Execute a Varredura</h3>
-                <p className="text-slate-600">
-                  Com o Instagram aberto, clique no ícone de <strong>Quebra-cabeça</strong> no canto superior direito do seu navegador Chrome. Selecione a extensão que você acabou de instalar. A própria ferramenta fará o resto e abrirá uma janela com a sua lista!
-                </p>
+
+              {/* Imagens do Passo 3 */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <img src="/imagem4.png" alt="Instrução Passo 3 - Imagem 1" className="rounded-xl shadow-sm border border-slate-200 w-full object-cover" />
+                <img src="/imagem5.png" alt="Instrução Passo 3 - Imagem 2" className="rounded-xl shadow-sm border border-slate-200 w-full object-cover" />
+                <img src="/imagem6.png" alt="Instrução Passo 3 - Imagem 3" className="rounded-xl shadow-sm border border-slate-200 w-full object-cover" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <img src="/imagem7.png" alt="Instrução Passo 3 - Imagem 1" className="rounded-xl shadow-sm border border-slate-200 w-full object-cover" />
               </div>
             </div>
           </div>
           
           <div className="mt-12 text-center text-slate-400 text-sm">
-            <p>Precisa de ajuda? Entre em contato com nosso suporte.</p>
+            <p>
+              Precisa de ajuda?{' '}
+              <a 
+                href="https://wa.me/5598988169246" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-slate-700 font-semibold border-b-2 border-green-500 hover:text-green-600 transition-colors pb-0.5 inline-block"
+              >
+                Entre em contato com nosso suporte
+              </a>
+            </p>
           </div>
         </main>
       </div>
