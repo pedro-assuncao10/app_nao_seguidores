@@ -148,7 +148,7 @@ export default function App() {
       if (data.init_point) {
         window.location.href = data.init_point;
       } else {
-        alert("Erro ao conectar com o Mercado Pago. Tente novamente.");
+        alert("Erro ao conectar com o Infinite Pay. Tente novamente.");
         setIsProcessing(false);
       }
     } catch (error) {

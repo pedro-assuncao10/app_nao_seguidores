@@ -18,7 +18,7 @@ export const handler = async (event) => {
       items: [
         {
           quantity: 1,
-          price: 90, // Valor em centavos: 1990 = R$ 19,90
+          price: 100, // Valor em centavos: 1990 = R$ 19,90
           description: "Acesso VIP - UnfollowTracker" // O texto exato que aparecerá na tela do PIX
         }
       ]
