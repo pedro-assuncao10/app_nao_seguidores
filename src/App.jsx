@@ -136,7 +136,7 @@ export default function App() {
   const handlePayment = () => {
     setIsProcessing(true);
     // Envia o usuário imediatamente para o link oficial da InfinitePay
-    window.location.href = "https://checkout.infinitepay.io/daniel-carlos-9u1/7dYV6LLPhf";
+    window.location.href = "https://checkout.infinitepay.io/daniel-carlos-9u1/xC8L9szE5";
   };
 
   const faqs = [
