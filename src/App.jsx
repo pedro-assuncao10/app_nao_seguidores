@@ -132,30 +132,11 @@ export default function App() {
     };
   }, []);
 
-  // FUNÇÃO REAL: Chama o Backend para gerar o link de pagamento
-  const handlePayment = async () => {
+  // FUNÇÃO NOVA: Redirecionamento direto para a InfinitePay
+  const handlePayment = () => {
     setIsProcessing(true);
-    
-    try {
-      // Chama a função que criamos no Netlify
-      const response = await fetch('/.netlify/functions/create-preference', {
-        method: 'POST',
-      });
-      
-      const data = await response.json();
-      
-      // Se a função devolveu o link de pagamento, redireciona o usuário para lá
-      if (data.init_point) {
-        window.location.href = data.init_point;
-      } else {
-        alert("Erro ao conectar com o Infinite Pay. Tente novamente.");
-        setIsProcessing(false);
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Erro de conexão. Verifique sua internet.");
-      setIsProcessing(false);
-    }
+    // Envia o usuário imediatamente para o link oficial da InfinitePay
+    window.location.href = "https://checkout.infinitepay.io/daniel-carlos-9u1/7dYV6LLPhf";
   };
 
   const faqs = [
@@ -228,7 +209,7 @@ export default function App() {
 
         {/* NOVO AVISO: Uso exclusivo em Computador */}
         <div className="bg-yellow-400 text-yellow-900 text-center py-2 px-4 text-sm font-bold shadow-sm">
-          ⚠️ Atenção: Esta extensão funciona EXCLUSIVAMENTE no Google Chrome(Edge) pelo computador. Não é possível instalar no celular.
+          ⚠️ Atenção: Esta extensão funciona EXCLUSIVAMENTE pelo computador. Não é possível instalar no celular.
         </div>
 
         <main className="max-w-4xl mx-auto px-6 mt-12">
@@ -325,6 +306,19 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <img src="/imagem7.png" alt="Instrução Passo 3 - Imagem 1" className="rounded-xl shadow-sm border border-slate-200 w-full object-cover" />
               </div>
+
+              {/* --- VÍDEO DO TUTORIAL ADICIONADO AQUI --- */}
+              <div className="mt-8 mb-4 max-w-3xl mx-auto rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-black w-full">
+                <video 
+                  src="/tutorial_nao_seguidores_ilovemp4.mp4" 
+                  controls 
+                  className="w-full h-auto max-h-[600px] object-contain"
+                >
+                  Seu navegador não suporta a tag de vídeo.
+                </video>
+              </div>
+              {/* --- FIM DO VÍDEO --- */}
+
             </div>
           </div>
           
