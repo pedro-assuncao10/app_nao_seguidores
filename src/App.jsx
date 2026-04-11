@@ -136,7 +136,7 @@ export default function App() {
   const handlePayment = () => {
     setIsProcessing(true);
     // Envia o usuário imediatamente para o link oficial da InfinitePay
-    window.location.href = "https://checkout.infinitepay.io/daniel-carlos-9u1/xC8L9szE5";
+    window.location.href = "https://checkout.infinitepay.io/daniel-carlos-9u1/3ombd8vvAD";
   };
 
   const faqs = [
@@ -369,9 +369,9 @@ export default function App() {
             <div className="absolute -top-4 -right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg transform rotate-3">
               Oferta Especial
             </div>
-            <div className="text-slate-500 line-through mb-1">De R$ 49,90 por apenas</div>
+            <div className="text-slate-500 line-through mb-1">De R$ 89,99 por apenas</div>
             <div className="text-5xl font-extrabold text-slate-900 mb-6">
-              R$ 19,90 <span className="text-lg text-slate-500 font-medium block mt-1">pagamento único</span>
+              R$ 49,99 <span className="text-lg text-slate-500 font-medium block mt-1">pagamento único</span>
             </div>
             
             <button 
