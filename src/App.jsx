@@ -338,7 +338,7 @@ export default function App() {
             <p>
               Precisa de ajuda?{' '}
               <a 
-                href="https://wa.me/5598988169246" 
+                href="https://wa.me/5598970167548" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-slate-700 font-semibold border-b-2 border-green-500 hover:text-green-600 transition-colors pb-0.5 inline-block"
